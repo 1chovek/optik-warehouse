@@ -1,0 +1,332 @@
+package ver1;
+
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Scanner;
+import javax.swing.AbstractAction;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
+
+public class clients extends JPanel {
+	
+	private JButton back = new JButton("Warehouse");
+	//private JButton edit = new JButton("Edit Client");
+	private JTable clients;
+	private JTextField person = new JTextField(20);
+	private JTextField firmname = new JTextField(20);
+	private JTextField adressl1 = new JTextField(20);
+	private JTextField adressl2 = new JTextField(20);
+	private JTextField tel = new JTextField(20);
+	private JTextField email = new JTextField(10);
+	private JTextField city = new JTextField(20);
+	private JTextField country = new JTextField(20);
+	FileInputStream fis;
+	FileInputStream dis;
+	FileInputStream pis;
+	File clientsdata;
+	private FileWriter tofile;
+	private Scanner sc;
+	private Scanner dc;
+	private Scanner mc;
+	JFrame frame = new JFrame();   //table maint = new table();
+	
+	String[] columnNames = {"Store Name","Adress","Last Order & Quantity", "Total Ordered"};
+
+	DefaultTableModel model = new DefaultTableModel(columnNames,0){
+
+	    @Override
+	    public boolean isCellEditable(int row, int column) {
+	       return false;
+	    }
+	};
+	
+	
+	public clients(String title) throws IOException {
+		
+		super ();
+		
+		//tablesortpodata();
+		fis = new FileInputStream("C:/WarehousePopcorn/clientsdata.txt");
+		dis = new FileInputStream("C:/WarehousePopcorn/events.txt");
+		pis = new FileInputStream("C:/WarehousePopcorn/events.txt");
+
+		clientsdata = new File ("C:/WarehousePopcorn/clientsdata.txt");
+		tofile = new FileWriter(clientsdata, true);
+		clients = new JTable(model);
+		tablepopulate();
+		
+		clients.getColumn("Store Name").setMinWidth(120);
+		clients.getColumn("Adress").setMinWidth(170);
+		clients.getColumn("Last Order & Quantity").setMinWidth(90);
+		clients.getColumn("Total Ordered").setMinWidth(70);
+		
+		
+		setLayout (new BorderLayout());
+		final JPanel addnewpanel = new JPanel ();
+		addnewpanel.add(new JLabel("Store Name:"));
+	      addnewpanel.add(firmname);
+	      addnewpanel.add(new JLabel("Person:"));
+	      addnewpanel.add(person);
+	      addnewpanel.add(new JLabel("Address:"));
+	      addnewpanel.add(adressl1);
+	      addnewpanel.add(new JLabel("Address:"));
+	      addnewpanel.add(adressl2);
+	      addnewpanel.add(new JLabel("Postcode / City:"));
+	      addnewpanel.add(city);
+	      addnewpanel.add(new JLabel("Country:"));
+	      addnewpanel.add(country);
+	      addnewpanel.add(new JLabel("Tel Number:"));
+	      addnewpanel.add(tel);
+	      addnewpanel.add(new JLabel("E-Mail:"));
+	      addnewpanel.add(email);
+	    addnewpanel.setLayout(new GridLayout(8,2));
+
+	    JPanel butonPanel = new JPanel();
+	    
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.getContentPane().add(new JScrollPane(clients,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
+		frame.getContentPane().add(butonPanel, BorderLayout.SOUTH);
+		frame.setBounds(350, 90, 770, 650);  
+	    frame.setVisible(true);
+	    
+	    butonPanel.add(back);
+		butonPanel.add(new JButton(new AbstractAction("Add New Client") {
+
+	         @Override
+	         public void actionPerformed(ActionEvent arg0) {
+	                 	 
+ 	        	firmname.setText("");
+	            person.setText("");
+	            adressl1.setText("");
+	            adressl2.setText("");
+	            tel.setText("");
+	            email.setText("");
+	            city.setText("");
+	            country.setText("Schweiz");
+	            
+	            int result = JOptionPane.showConfirmDialog(clients.this, addnewpanel,
+	                  "Add New Client", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+	            if (result == JOptionPane.OK_OPTION) {
+	            	
+
+	               try {
+					tofile.write(firmname.getText());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+	               try {
+					tofile.write( " ::: " + person.getText());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+	               try {
+					tofile.write( " ::: " + adressl1.getText());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	               
+	               try {
+						tofile.write( " ::: " + adressl2.getText());
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+	              
+	               try {
+						tofile.write( " ::: " + city.getText());
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+	         
+	               try {
+					tofile.write( " ::: " + country.getText());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	               try {
+						tofile.write( " ::: " + tel.getText());
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+	               try {
+						tofile.write( " ::: " + email.getText());
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+	               
+	               try {
+						tofile.write( " :::  ::: 0");
+						tofile.write(System.getProperty( "line.separator" ));
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+	              
+	               try {
+					tofile.flush();
+				} catch (IOException e) {
+					// TODO Auto-generated catch blockfdfdddfd
+					e.printStackTrace();
+				}
+	               try {
+	            	   
+					tablepopulate();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}							
+	            }
+	         }
+	      }));
+		//edit.setEnabled(false);
+		//butonPanel.add(edit);
+		
+		
+clients.addMouseListener(new MouseAdapter() {
+
+			private Sell chosenone;
+
+			public void mousePressed(MouseEvent me) {
+		        
+				JTable table = (JTable) me.getSource();
+		        Point p = me.getPoint();
+		        int row = table.rowAtPoint(p);
+		        if (me.getClickCount() == 2) {
+	
+		    	frame.dispose();
+		    	chosenone = new Sell (clients.getValueAt(row, 0).toString(), clients.getValueAt(row, 1).toString(), row);
+		        	
+		        } else if (me.getClickCount() == 1){   // not working yet
+		        	//edit.setEnabled(true);
+		        }
+		    }
+		});
+		
+		Reaction react = new Reaction();
+		back.addActionListener(react);
+		//edit.addActionListener(react);
+
+	}
+	
+	private void tablepopulate() throws IOException{
+		
+		model.setRowCount(0);
+	  	sc = new Scanner(fis);
+        String line;
+        String details[] = null;
+
+        int ln =0;
+        while(sc.hasNextLine()){
+            
+        	line = sc.nextLine();
+            details = line.split(":::");        
+            Object petails [] = {details[0], details[4] + " / " + details[2], loq(Integer.toString(ln)), tq(ln) + " units"};
+            ln++;
+            model.addRow(petails);
+        }
+        sc.close();
+        sc=null;
+        fis.close();
+        fis = new FileInputStream("C:/WarehousePopcorn/clientsdata.txt");
+      
+	}
+	
+	private int tq (Integer thecli) throws IOException{
+
+		 	mc = new Scanner(pis);
+	        String dateq;
+	        String dateqils[] = null;
+	        String line2[] = null;
+	        int tcliq = 0;
+	        
+	        while(mc.hasNextLine()){
+
+	        	dateq = mc.nextLine();
+	            dateqils = dateq.split(":::"); 	     
+	            line2 = dateqils[1].split(";;");
+   
+	            if(Integer.toString(thecli).equalsIgnoreCase(dateqils[0])){
+            	
+	            	tcliq += Integer.parseInt(line2[line2.length-1]); 
+	 
+	            }
+	        } 
+	        
+	        mc.close();
+            mc=null;
+            pis.close();
+            pis = new FileInputStream("C:/WarehousePopcorn/events.txt");
+
+	        return tcliq;
+	}
+	
+	private String loq (String thecli) throws IOException{
+		
+	 	dc = new Scanner(dis);
+	 	String line2[] = null;
+	 	String dateq;
+        String dateqils[] = null;
+        String qqq = null;
+        String tansw = new String();
+        
+        while(dc.hasNextLine()){
+            
+        	dateq = dc.nextLine();
+            dateqils = dateq.split(":::");
+            
+            if(dateqils[0].equalsIgnoreCase(thecli)){
+            	
+            	line2 = dateqils[1].split(";;");
+            	tansw = dateqils[2].substring(4, 10) + " " + dateqils[2].substring(24)+ " / " + line2[line2.length-1] + " units";
+
+            }          
+        } 
+        
+        dc.close();
+        dc=null;
+        dis.close();
+        dis = new FileInputStream("C:/WarehousePopcorn/events.txt");
+        
+        return tansw; 
+}
+	
+	
+	public class Reaction implements ActionListener{
+		
+		public void actionPerformed (ActionEvent event){
+					
+			if (back == event.getSource()) {
+		    		frame.dispose();
+		    		try {
+						MainPageG tmp = new MainPageG("popcorn warehouse MainPage");
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+			} 
+	}
+}
+}
