@@ -3,6 +3,7 @@ developed under the specific requierements of a small eyewear supplier
 
 the code is //hard to read bc its the second program i have done so far. 
 took me around 3 working weeks 8 hrs/day 
+i knew it upside.down
 
 hidden double clicks on the 2 main tables for more functions
 
