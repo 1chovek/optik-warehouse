@@ -1,0 +1,26 @@
+package ver1;
+
+import java.io.File;
+import java.io.IOException;
+
+public class test {
+	
+
+	
+	public static void main(String[] args) throws IOException {
+
+		new File("C:/WarehousePopcorn").mkdirs();
+		new File("C:/WarehousePopcorn/clientsdata.txt").createNewFile();
+		new File("C:/WarehousePopcorn/events.txt").createNewFile();
+		new File("C:/WarehousePopcorn/warehouse.txt").createNewFile();
+		
+			clients gotoclients = new clients("Clients Data Table");
+		
+		
+		//MainPageG tmp = new MainPageG("popcorn warehouse MainPage");
+		
+		
+	}
+
+}
+
