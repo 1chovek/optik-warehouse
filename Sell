@@ -1,0 +1,1182 @@
+package ver1;
+
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.print.PrinterException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Scanner;
+import java.util.Date;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
+
+public class Sell extends JPanel {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private JComboBox models;
+	//private JButton back = new JButton("Main Menu");
+	private JButton clnts = new JButton("Back to Clients");
+	private JButton done  = new JButton("Save & Print");
+	private JButton search  = new JButton("SEARCH MODELS");
+	HashMap<String, Integer> thehash = new HashMap <String, Integer>();
+	private String comboslist[];
+	private String colectionlist[] = new String[1000];
+	HashSet<String> colectionlis = new HashSet<String>();
+	HashSet<String> wide = new HashSet<String>();
+	HashSet<String> cent = new HashSet<String>();
+	HashSet<String> ram = new HashSet<String>();
+	private String widelist[] = new String[1000];
+	private String centlist[] = new String[1000];
+	private String ramlist[] = new String[1000];
+	private ArrayList<String> modellist = new ArrayList<String>();
+	private JTextField qtty = new JTextField(5);
+	int k=0;
+	int w=0;
+	int cn=0;
+	int r=0;
+	int col;
+	int wi;
+	int ci;
+	int ri;
+	JCheckBox[] colcheckBoxList;
+	JCheckBox[] widecheckBoxList;
+	JCheckBox[] centcheckBoxList;
+	JCheckBox[] ramcheckBoxList;
+	String[] getcol;
+	String[] getwide;
+	String[] getcent;
+	String[] getram;
+	String zero = ".*";
+	String searchstringis;
+    JPanel clntPanel = new JPanel();
+    JPanel clntPanel1 = new JPanel();
+    JPanel clntPanel2 = new JPanel();
+    JPanel clntPanel3 = new JPanel();
+    JPanel clntPanel4 = new JPanel();
+    JPanel clntPanel5 = new JPanel();
+    Date theday;
+	public String elmodels = new String();
+	private ArrayList<String> collis;
+	private ArrayList<String> widelis;
+	private ArrayList<String> centlis;
+	private ArrayList<String> ramlis;
+	public int modelis = 0;
+	private FileWriter tofile;
+	File events;
+	Date thedate = new Date(); 
+	public int chosenclient;
+	FileInputStream fis; 
+	FileInputStream dis;
+	private int lines;
+	String[] columnNames = {"Model & Colour", "Width", "Bridge", "Temple","Order 1 unit"};
+	String[] columnNameslast = {"Model & Colour", "Width", "Bridge", "Temple"};
+	JFrame frame = new JFrame("Sale Order");
+	DefaultTableModel model = new DefaultTableModel(columnNameslast,0){
+
+	    /**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		@Override
+	    public boolean isCellEditable(int row, int column) {
+
+	    	 return false;
+	    }	
+	};
+	
+	DefaultTableModel checkmodel = new DefaultTableModel(columnNames,0){
+
+	    /**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		@Override
+	    public boolean isCellEditable(int row, int column) {
+	    	if (column < 4) {
+	            return false;
+	        } else {
+	            return true;
+	        }
+	    }
+	    
+	    @Override
+        public Class<?> getColumnClass(int column) {
+            switch (column) {
+                case 0:
+                    return String.class;
+                case 1:
+                    return String.class;
+                case 2:
+                	return String.class;
+                case 3:
+                	return String.class;
+                default:
+                    return Boolean.class;
+            }
+        }
+	};
+
+	private String scol = "[a-zA-Z0-9]+";
+	
+	private String swide = "[a-zA-Z0-9]+";
+	private String scent= "[a-zA-Z0-9]+";
+	private String sram= "[a-zA-Z0-9]+";
+	JTable table = new JTable(checkmodel);
+	SearchClass searching = new SearchClass();
+	private Scanner sc;
+	private Scanner sc2;
+	private int x;
+	private Scanner dc;
+	private Scanner sc3;
+	private int x2;
+	private Scanner sc4;
+	private int x3;
+	private Scanner sc5;
+	private int x4;
+	
+	public Sell (String cname, String cadress, int clnmbr){
+	
+	super();
+
+     clntPanel.setLayout(new GridLayout(6,1));
+     clntPanel1.setLayout(new FlowLayout());
+     clntPanel2.setLayout(new FlowLayout());
+     clntPanel3.setLayout(new FlowLayout());
+     clntPanel4.setLayout(new FlowLayout());
+     clntPanel5.setLayout(new FlowLayout());
+     
+     clntPanel1.add(new JLabel("New Order for Client:  " + cname + " / " + cadress)); 
+
+     clntPanel3.add(new JLabel("Choose Width:"));
+     widelist(); 
+     clntPanel4.add(new JLabel("Choose Bridge:"));
+     centerlist();
+     clntPanel5.add(new JLabel("Choose Temple:"));
+     ramlistt();
+     clntPanel2.add(new JLabel("Choose Collection:"));
+     makelist2(); 
+     
+     clntPanel.add(clntPanel1);
+     clntPanel.add(clntPanel2);
+     clntPanel.add(clntPanel5);
+     clntPanel.add(clntPanel4);
+     clntPanel.add(clntPanel3);
+     // search.setPreferredSize(new Dimension(5,10));  ne raboti.. ?
+     clntPanel.add(search);
+     
+     Action actio = new Action(); 
+     search.addActionListener(actio);
+     //back.addActionListener(actio);
+     done.setEnabled(false);
+     done.addActionListener(actio);
+     clnts.addActionListener(actio);
+	
+    JPanel btnPanel = new JPanel();  
+
+	//btnPanel.add(back); 
+	btnPanel.add(clnts);
+	
+	btnPanel.add(done);
+	chosenclient = clnmbr;
+	setLayout(new BorderLayout());
+
+	frame.getContentPane().add(clntPanel, BorderLayout.NORTH);
+	frame.getContentPane().add(new JScrollPane(new JTable(model)), BorderLayout.CENTER);
+	frame.getContentPane().add(btnPanel, BorderLayout.SOUTH); 
+    frame.setBounds(350, 90, 770, 650);
+	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    frame.setVisible(true);
+
+}
+
+public void makelist2(){   
+
+    try {
+	         
+			FileInputStream fis = new FileInputStream("C:/WarehousePopcorn/warehouse.txt");
+	         sc4 = new Scanner(fis);
+	         
+	         x3 = 0;
+	         while(sc4.hasNextLine()){
+	             
+	         	String line = sc4.nextLine();
+	             String[] details = line.split(":::");
+	            
+	             colectionlis.add(details[0]);
+		            
+	         }	
+	         
+	     } catch (FileNotFoundException e) {         
+	         e.printStackTrace();
+	     }   	 
+	
+			String collis[] = colectionlis.toArray(new String[1000]);
+    
+    		colectionlist[0] = collis[0];
+
+    		int z=0;
+    		int y=0;    		
+    		
+    	while (collis[z].equalsIgnoreCase(colectionlist[k]) && collis[z+1] != null) {    
+    		
+    		y++;
+    		if (collis[z].equalsIgnoreCase(collis[z+1])){
+
+    			z=y;
+    			
+    			colectionlist[k] = collis[z];
+
+    		} else {
+    		
+    			k++;
+    			colectionlist[k] = collis[z+1];
+    			z=y;
+    			
+    			
+    		}
+	
+    	}
+    	
+    	colcheckBoxList = new JCheckBox[k+1];
+		
+		for(col = 0; col <= k; col++) {
+		    colcheckBoxList[col] = new JCheckBox(colectionlist[col]);
+		    clntPanel2.add(colcheckBoxList[col], false);
+		    colcheckBoxList[col].addItemListener(searching);		
+
+				}
+}
+
+public void widelist(){   
+
+    try {
+	         
+			FileInputStream fis = new FileInputStream("C:/WarehousePopcorn/warehouse.txt");
+	         sc3 = new Scanner(fis);
+	         
+	         x2 = 0;
+	         while(sc3.hasNextLine()){
+	             
+	         	String line = sc3.nextLine();
+	             String[] details = line.split(":::");
+	            
+	             wide.add(details[2]);
+	            
+	         }	
+	         
+	     } catch (FileNotFoundException e) {         
+	         e.printStackTrace();
+	     }   	 
+	
+			String widelis[] = wide.toArray(new String[1000]);
+    
+    		widelist[0] = widelis[0];
+
+    		int z=0;
+    		int y=0;    		
+    		
+    	while (widelis[z].equalsIgnoreCase(widelist[w]) && widelis[z+1] != null) {    
+    		
+    		y++;
+    		if (widelis[z].equalsIgnoreCase(widelis[z+1])){
+
+    			z=y;
+    			
+    			widelist[w] = widelis[z];
+
+    		} else {
+    		
+    			w++;
+    			widelist[w] = widelis[z+1];
+    			z=y;
+    			
+    			
+    		}
+	
+    	}
+    	
+				widecheckBoxList = new JCheckBox[w+1];
+				 
+				for(wi = 0; wi <= w; wi++) {
+				    widecheckBoxList[wi] = new JCheckBox(widelist[wi]);
+				    clntPanel3.add(widecheckBoxList[wi], false);
+				    widecheckBoxList[wi].addItemListener(searching);
+				}
+}
+
+public void centerlist(){   
+
+    try {
+	         
+			FileInputStream fis = new FileInputStream("C:/WarehousePopcorn/warehouse.txt");
+	         sc5 = new Scanner(fis);
+	         
+	         x4 = 0;
+	         while(sc5.hasNextLine()){
+	             
+	         	String line = sc5.nextLine();
+	             String[] details = line.split(":::");
+
+	            cent.add(details[3]);
+	         }	
+	         
+	     } catch (FileNotFoundException e) {         
+	         e.printStackTrace();
+	     }   	 
+			
+    		String centlis[] = cent.toArray(new String[1000]);
+    		
+    		centlist[0] = centlis[0];
+
+    		int z=0;
+    		int y=0;    		
+    		
+    	while (centlis[z].equalsIgnoreCase(centlist[cn]) && centlis[z+1] != null) {    
+    		
+    		y++;
+    		if (centlis[z].equalsIgnoreCase(centlis[z+1])){
+
+    			z=y;
+    			
+    			centlist[cn] = centlis[z];
+
+    		} else {
+    		
+    			cn++;
+    			centlist[cn] = centlis[z+1];
+    			z=y;
+    			
+    			
+    		}
+	
+    	}
+    	
+				centcheckBoxList = new JCheckBox[cn+1];
+				 
+				for(ci = 0; ci <= cn; ci++) {
+				    centcheckBoxList[ci] = new JCheckBox(centlist[ci]);
+				    clntPanel4.add(centcheckBoxList[ci], false);
+				    centcheckBoxList[ci].addItemListener(searching);
+				}
+}
+
+public void ramlistt(){   
+
+    try {
+	         
+			FileInputStream fis = new FileInputStream("C:/WarehousePopcorn/warehouse.txt");
+	         sc2 = new Scanner(fis);
+	         
+	         x = 0;
+	         while(sc2.hasNextLine()){
+	             
+	         	String line = sc2.nextLine();
+	             String[] details = line.split(":::");
+	            
+	             ram.add(details[4]);
+	            
+	         }	
+	         
+	     } catch (FileNotFoundException e) {         
+	         e.printStackTrace();
+	     }   	 
+			String ramlis[] = ram.toArray(new String[1000]);
+    		ramlist[0] = ramlis[0];
+
+    		int z=0;
+    		int y=0;    		
+    		
+    	while (ramlis[z].equalsIgnoreCase(ramlist[r]) && ramlis[z+1] != null) {    
+    		
+    		y++;
+    		if (ramlis[z].equalsIgnoreCase(ramlis[z+1])){
+
+    			z=y;
+    			
+    			ramlist[r] = ramlis[z];
+
+    		} else {
+    		
+    			r++;
+    			ramlist[r] = ramlis[z+1];
+    			z=y;	
+    			
+    		}
+	
+    	}
+    	
+				ramcheckBoxList = new JCheckBox[r+1];
+				 
+				for(ri = 0; ri <= r; ri++) {
+				    ramcheckBoxList[ri] = new JCheckBox(ramlist[ri]);
+				    clntPanel5.add(ramcheckBoxList[ri], false);
+				    ramcheckBoxList[ri].addItemListener(searching);
+				}
+}
+
+private class SearchClass implements ItemListener {
+
+	@Override
+	public void itemStateChanged(ItemEvent event) {
+				
+		collis = new ArrayList<String>();
+		widelis = new ArrayList<String>();
+		centlis = new ArrayList<String>();
+		ramlis = new ArrayList<String>();
+		
+		for(int i =0; i<col; i++){
+			if(colcheckBoxList[i].isSelected()){
+				collis.add(colcheckBoxList[i].getText());
+								
+			}
+		}
+		
+		for(int i =0; i<wi; i++){
+			if(widecheckBoxList[i].isSelected()){
+				widelis.add(widecheckBoxList[i].getText());
+			}
+		}
+		
+		for(int i =0; i<ci; i++){
+			if(centcheckBoxList[i].isSelected()){
+				centlis.add(centcheckBoxList[i].getText());
+			}
+		}
+		
+		for(int i =0; i<ri; i++){
+			if(ramcheckBoxList[i].isSelected()){
+				ramlis.add(ramcheckBoxList[i].getText());
+			}
+		}
+}
+	
+}
+
+public void makemodelpanel(){
+	
+	 JPanel modelPanel = new JPanel();
+	 modelPanel.setLayout(new FlowLayout());
+	 modelPanel.add(new JScrollPane(table));
+	 
+	 int result = JOptionPane.showConfirmDialog(Sell.this, modelPanel,
+          "Choose Model", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+	 
+	 if (result == JOptionPane.OK_OPTION) {
+		 
+		 done.setEnabled(true);
+		 
+		 for (int i = 0; i < table.getRowCount(); i++) {
+		     boolean isChecked = (Boolean) table.getValueAt(i, 4);
+
+		     if (isChecked) {
+		        
+		    	 addtolastable(table.getValueAt(i, 0).toString() , table.getValueAt(i, 1).toString() ,table.getValueAt(i, 2).toString(), table.getValueAt(i, 3).toString());
+		    }
+		}
+		 
+     } else {
+
+     }
+}
+
+public void addtolastable(String colnum, String wid, String ce, String ra){
+	
+	 Object[] dataRow = new Object[] { colnum, wid, ce, ra};
+	 elmodels = elmodels.concat(colnum + ";;");    // pylni porychainte modeli ot klienta
+	 modelis++;
+	 model.addRow(dataRow);
+	 
+	 //System.out.println(elmodels);
+	
+	}
+public void addtotable(String colnum, String wid, String ce, String ra, String q){
+
+		Object[] dataRow = new Object[] { colnum, wid, ce, ra, false};
+		 checkmodel.addRow(dataRow);
+
+}
+
+public void combolist(String quanty){
+	
+	
+	int qnt = Integer.parseInt(quanty);
+	System.out.println(qnt);
+	comboslist = new String [qnt+1];
+	 
+	for ( int i=0; i<=qnt; i++) {
+          
+		
+		System.out.println(i);
+          comboslist[i] = Integer.toString(i);  
+
+      }	
+	
+}
+
+public int leftq(String model) throws IOException{
+
+	FileInputStream ppis = new FileInputStream("C:/WarehousePopcorn/events.txt");
+	Scanner ssc = new Scanner(ppis);
+    String dateql;
+    String dateqilsl[] = null;     
+    int q = 0;
+
+    while(ssc.hasNextLine()){
+   
+    	dateql = ssc.nextLine();
+        dateqilsl = dateql.split(":::"); 
+
+        if(dateqilsl[0].equalsIgnoreCase(model)) { 
+            q += Integer.parseInt(dateqilsl[1]);    
+        } 
+    }
+    
+    ssc.close();
+    ssc=null;
+    ppis.close();
+
+	FileInputStream pdis = new FileInputStream("C:/WarehousePopcorn/events.txt");
+    Scanner sdc = new Scanner(pdis);
+    String dateq;
+    String dateqils[] = null;
+    String line2[] = null;
+    int qs = 0;
+    
+    while(sdc.hasNextLine()){
+        
+    	dateq = sdc.nextLine();
+        dateqils = dateq.split(":::"); 
+        line2 = dateqils[1].split(";;");
+
+        for (String what: line2){
+        	
+        	if(what.equalsIgnoreCase(model)){
+
+        		qs++;
+        	}
+        }
+    } 
+
+    sdc.close();
+    sdc=null;
+    pdis.close();     
+   
+    q = q - qs;
+    
+    return q;
+}
+
+public void makelist3(String c, String w, String cn, String r) throws IOException{
+	
+	 try {    
+			FileInputStream fis = new FileInputStream("C:/WarehousePopcorn/warehouse.txt");
+	         sc = new Scanner(fis);
+	         FileInputStream dis = new FileInputStream("C:/WarehousePopcorn/events.txt");
+	         dc = new Scanner(dis);
+	    	 
+	         if(c.equalsIgnoreCase(zero) && w.equalsIgnoreCase(zero) && cn.equalsIgnoreCase(zero) && r.equalsIgnoreCase(zero)){
+	        	
+	        	 while(sc.hasNextLine()){
+		             
+	 	         	String line = sc.nextLine();
+	 	             String[] details = line.split(":::");
+       
+	 	             if(leftq(details[1]) > 0){
+
+	 	            	 addtotable(details[1], details[2],details[3],details[4], details[6] );
+	 	            	// modellist.add(details[1] + " - " + details[2] + " - " + details[3] + " - " + details[4] + " - available: " + details[6]);  
+
+	 	             }	else {
+	 	        	 
+	 	            	 //System.out.println("3");	            	 
+	 	         
+	 	             }
+	        	 }
+	        	 
+	         } else if (c.equalsIgnoreCase(zero) && w.equalsIgnoreCase(zero) && cn.equalsIgnoreCase(zero)){
+	        	 
+	        	 while(sc.hasNextLine()){
+		             
+		 	         	String line = sc.nextLine();
+		 	             String[] details = line.split(":::");
+	 	                      
+		 	             if(r.equalsIgnoreCase(details[4]) && leftq(details[1])>0){
+		 		 	            	 
+		 	            	addtotable(details[1], details[2],details[3],details[4], details[7] );
+
+		 	             }	else {
+		 	        	 
+		 	            	 //System.out.println("24");	            	 
+		 	         
+		 	             }
+		        	 }
+	        	 
+	         } else if (c.equalsIgnoreCase(zero) && w.equalsIgnoreCase(zero) && r.equalsIgnoreCase(zero)){
+	        	 
+	        	 while(sc.hasNextLine()){
+		             
+		 	         	String line = sc.nextLine();
+		 	             String[] details = line.split(":::");
+		 	             
+		 	                      
+		 	             if(cn.equalsIgnoreCase(details[3]) && leftq(details[1]) > 0){
+		 	            	 
+		 	            	 System.out.println("the man");
+		 	            	 
+		 	            	addtotable(details[1], details[2],details[3],details[4], details[7] );  
+
+		 	             }	else {
+		 	        	 
+		 	            	 System.out.println("23");	            	 
+		 	         
+		 	             }
+		        	 }
+	         } else if (c.equalsIgnoreCase(zero) && cn.equalsIgnoreCase(zero) && r.equalsIgnoreCase(zero)){
+	        	 
+	        	 while(sc.hasNextLine()){
+		             
+		 	         	String line = sc.nextLine();
+		 	             String[] details = line.split(":::");
+		 	             
+		 	                      
+		 	             if(w.equalsIgnoreCase(details[2]) && leftq(details[1]) > 0){
+		 	            	 
+		 	            	addtotable(details[1], details[2],details[3],details[4], details[7] );  
+
+		 	             }	else {
+		 	        	 
+		 	            	 System.out.println("22");	            	 
+		 	         
+		 	             }
+		        	 } 
+	        	 
+	         	} else if (w.equalsIgnoreCase(zero) && cn.equalsIgnoreCase(zero) && r.equalsIgnoreCase(zero)){
+	        	 
+	        	 while(sc.hasNextLine()){
+		             
+		 	         	String line = sc.nextLine();
+		 	             String[] details = line.split(":::");
+		 	             
+		 	                      
+		 	             if(c.equalsIgnoreCase(details[0]) && leftq(details[1]) > 0){
+
+		 	            	addtotable(details[1], details[2],details[3],details[4], details[7] );  
+
+		 	             }	else {
+		 	        	 
+		 	            	 System.out.println("21");	            	 
+		 	         
+		 	             }
+		        	 } 
+	        	 
+	         	} else if (cn.equalsIgnoreCase(zero) && r.equalsIgnoreCase(zero)){
+			        	 
+			        	 while(sc.hasNextLine()){
+				             
+				 	         	String line = sc.nextLine();
+				 	             String[] details = line.split(":::");
+				 	             
+				 	                      
+				 	             if(c.equalsIgnoreCase(details[0])&& w.equalsIgnoreCase(details[2])  && leftq(details[1]) > 0){
+				 	            	 
+				 	            	addtotable(details[1], details[2],details[3],details[4], details[7] );  
+
+				 	             }	else {
+				 	        	 
+				 	            	 System.out.println("16");	            	 
+				 	         
+				 	             }
+				        	 } 
+			        	 
+	         	} else if (c.equalsIgnoreCase(zero) && r.equalsIgnoreCase(zero)){
+					        	 
+					        	 while(sc.hasNextLine()){
+						             
+						 	         	String line = sc.nextLine();
+						 	             String[] details = line.split(":::");
+						 	             
+						 	                      
+						 	             if(cn.equalsIgnoreCase(details[3])&& w.equalsIgnoreCase(details[2])  && leftq(details[1]) > 0){
+						 	            	 
+						 	            	addtotable(details[1], details[2],details[3],details[4], details[7] );  
+
+						 	             }	else {
+						 	        	 
+						 	            	 System.out.println("15");	            	 
+						 	         
+						 	             }
+						        	 }
+	         	
+	         	} else if (c.equalsIgnoreCase(zero) && cn.equalsIgnoreCase(zero)){
+		        	 
+		        	 while(sc.hasNextLine()){
+			             
+			 	         	String line = sc.nextLine();
+			 	             String[] details = line.split(":::");
+			 	             
+			 	                      
+			 	             if(r.equalsIgnoreCase(details[4])&& w.equalsIgnoreCase(details[2])  && leftq(details[1]) > 0){
+
+			 	            	addtotable(details[1], details[2],details[3],details[4], details[7] );  
+
+			 	             }	else {
+			 	        	 
+			 	            	 System.out.println("14");	            	 
+			 	         
+			 	             }
+			        	 }
+		        	 
+	         	} else if (c.equalsIgnoreCase(zero) && w.equalsIgnoreCase(zero)){
+		        	 
+		        	 while(sc.hasNextLine()){
+			             
+			 	         	String line = sc.nextLine();
+			 	             String[] details = line.split(":::");
+			 	             
+			 	                      
+			 	             if(cn.equalsIgnoreCase(details[3])&& r.equalsIgnoreCase(details[4])  && leftq(details[1]) > 0){
+			 	            	 
+			 	            	addtotable(details[1], details[2],details[3],details[4], details[7] );  
+
+			 	             }	else {
+			 	        	 
+			 	            	 System.out.println("13");	            	 
+			 	         
+			 	             }
+			        	 }
+	        	 
+	         	} else if (cn.equalsIgnoreCase(zero) && w.equalsIgnoreCase(zero)){
+		        	 
+		        	 while(sc.hasNextLine()){
+			             
+			 	         	String line = sc.nextLine();
+			 	             String[] details = line.split(":::");
+			 	             
+			 	                      
+			 	             if(c.equalsIgnoreCase(details[0])&& r.equalsIgnoreCase(details[4])  && leftq(details[1]) > 0){
+			 	            	 
+			 	            	addtotable(details[1], details[2],details[3],details[4], details[7] ); 
+
+			 	             }	else {
+			 	        	 
+			 	            	 System.out.println("12");	            	 
+			 	         
+			 	             }
+			        	 }
+	        
+	         	} else if (w.equalsIgnoreCase(zero) && r.equalsIgnoreCase(zero)){
+		        	 
+		        	 while(sc.hasNextLine()){
+			             
+			 	         	String line = sc.nextLine();
+			 	             String[] details = line.split(":::");
+			 	             
+			 	                      
+			 	             if(c.equalsIgnoreCase(details[0]) && cn.equalsIgnoreCase(details[3])  && leftq(details[1]) > 0){
+			 	            	 
+			 	            	 System.out.println("the man");
+			 	            	 
+			 	            	addtotable(details[1], details[2],details[3],details[4], details[7] );  
+
+			 	             }	else {
+			 	        	 
+			 	            	 System.out.println("11");	            	 
+			 	         
+			 	             }
+			        	 }
+	         
+	         	} else if (cn.equalsIgnoreCase(zero)){
+		        	 
+		        	 while(sc.hasNextLine()){
+			             
+			 	         	String line = sc.nextLine();
+			 	             String[] details = line.split(":::");
+			 	             
+			 	                      
+			 	             if(c.equalsIgnoreCase(details[0])&& w.equalsIgnoreCase(details[2])  && r.equalsIgnoreCase(details[4]) && leftq(details[1]) > 0){
+			 	            	 
+			 	            	 System.out.println("the man");
+			 	            	 
+			 	            	addtotable(details[1], details[2],details[3],details[4], details[7] );  
+
+			 	             }	else {
+			 	        	 
+			 	            	 System.out.println("4");	            	 
+			 	         
+			 	             }
+			        	 }
+		        	 
+	         	} else if (c.equalsIgnoreCase(zero)){
+		        	 
+		        	 while(sc.hasNextLine()){
+			             
+			 	         	String line = sc.nextLine();
+			 	             String[] details = line.split(":::");
+			 	             
+			 	                      
+			 	             if(cn.equalsIgnoreCase(details[3])&& w.equalsIgnoreCase(details[2])  && r.equalsIgnoreCase(details[4]) && leftq(details[1]) > 0){
+			 	            	 
+			 	            	 System.out.println("the man");
+			 	            	 
+			 	            	addtotable(details[1], details[2],details[3],details[4], details[7] );  
+
+			 	             }	else {
+			 	        	 
+			 	            	 System.out.println("3");	            	 
+			 	         
+			 	             }
+			        	 }
+		        	 
+	         	} else if (r.equalsIgnoreCase(zero)){
+		        	 
+		        	 while(sc.hasNextLine()){
+			             
+			 	         	String line = sc.nextLine();
+			 	             String[] details = line.split(":::");
+			 	             
+			 	                      
+			 	             if(c.equalsIgnoreCase(details[0])&& w.equalsIgnoreCase(details[2])  && cn.equalsIgnoreCase(details[3]) && leftq(details[1]) > 0){
+			 	            	 
+			 	            	 System.out.println("the man");
+			 	            	 
+			 	            	addtotable(details[1], details[2],details[3],details[4], details[7] );  
+
+			 	             }	else {
+			 	        	 
+			 	            	 System.out.println("2");	            	 
+			 	         
+			 	             }
+			        	 }
+		        	 
+	         	} else if (w.equalsIgnoreCase(zero)){
+		        	 
+		        	 while(sc.hasNextLine()){
+			             
+			 	         	String line = sc.nextLine();
+			 	             String[] details = line.split(":::" );
+			 	             
+			 	                      
+			 	             if(c.equalsIgnoreCase(details[0])&& cn.equalsIgnoreCase(details[3])  && r.equalsIgnoreCase(details[4]) && leftq(details[1]) > 0){
+			 	            	 
+			 	            	 System.out.println("the man");
+			 	            	 
+			 	            	addtotable(details[1], details[2],details[3],details[4], details[7] );  
+
+			 	             }	else {
+			 	        	 
+			 	            	 System.out.println("1");	            	 
+			 	         
+			 	             }
+			        	 }
+		        	 
+	         	} else {
+	         
+	         			while(sc.hasNextLine()){
+	             
+	         			String line = sc.nextLine();
+	         			String[] details = line.split(":::" );
+	             
+	                      
+	         			if(c.equalsIgnoreCase(details[0])&& w.equalsIgnoreCase(details[2]) && cn.equalsIgnoreCase(details[3])&& r.equalsIgnoreCase(details[4]) && leftq(details[1]) > 0){
+	            	 
+	         				System.out.println("the all man");
+	            	 
+	         				addtotable(details[1], details[2],details[3],details[4], details[7] );  
+
+	         			}	else {
+	        	 
+	         				System.out.println("0");	            	 
+	         
+	         			} 
+	         		}
+	         	}         
+	 }
+	         	
+        	catch (FileNotFoundException e) {         
+	         e.printStackTrace();
+	     }   	 
+
+}
+
+
+private class Action implements ActionListener{
+	
+	 public void actionPerformed(ActionEvent e){
+		 
+		  if (done == e.getSource()) {
+			  //System.out.println("aaaaaaaa");
+			  events = new File ("C:/WarehousePopcorn/events.txt");
+			  
+			  try {
+				tofile = new FileWriter(events, true);
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			  //System.out.println(chosenclient);
+			  try {
+					tofile.write(chosenclient+ "");
+				} catch (IOException ev) {
+					// TODO Auto-generated catch block
+					ev.printStackTrace();
+				}
+			  
+             try {
+				tofile.write(":::" + elmodels + modelis);
+			} catch (IOException ev) {
+				// TODO Auto-generated catch block
+				ev.printStackTrace();
+			}
+             try {
+					tofile.write(":::" + thedate);
+				} catch (IOException ev) {
+					// TODO Auto-generated catch block
+					ev.printStackTrace();
+				}
+             try {
+					tofile.write("\n");
+				} catch (IOException ev) {
+					// TODO Auto-generated catch block
+					ev.printStackTrace();
+				}
+             try {
+				tofile.flush();
+			} catch (IOException ev) {
+				// TODO Auto-generated catch block
+				ev.printStackTrace();
+			} 
+             try {
+         		new JTable(model).print();
+         	} catch (PrinterException hj) {
+         		// TODO Auto-generated catch block
+         		hj.printStackTrace();
+         	}
+             frame.dispose();
+             try {
+				clients gotoclients = new clients("Clients Data Table");
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+
+		 }else if (clnts == e.getSource()) {   	
+		    	
+			 frame.dispose();
+	    		try {
+					clients gotoclients = new clients("Clients Data Table");
+				} catch (IOException eee) {
+					// TODO Auto-generated catch block
+					eee.printStackTrace();
+				}
+			 
+			 
+	     } else if (search == e.getSource()) {
+	    	 
+	    	 checkmodel.setRowCount(0);
+	    	 //modelis = 0;
+	    	 
+	    	if(collis.isEmpty() == false){	    		
+	    		for(int cl=0; cl <collis.size(); cl++){
+	    			if(widelis.isEmpty() == false){	    				
+	    				for(int wl=0; wl < widelis.size(); wl++){	    					
+	    					if(centlis.isEmpty() == false){	    						
+	    						for(int cnl=0; cnl < centlis.size(); cnl++){	    							
+	    							if(ramlis.isEmpty() == false){	    								
+	    								for(int rl=0; rl <ramlis.size(); rl++){	    										    									
+	    									try {
+												makelist3(collis.get(cl),widelis.get(wl),centlis.get(cnl),ramlis.get(rl));
+											} catch (IOException e1) {
+												// TODO Auto-generated catch block
+												e1.printStackTrace();
+											}
+	    								} 		    								
+	    							}else{
+	    									try {
+												makelist3(collis.get(cl),widelis.get(wl),centlis.get(cnl),zero);
+											} catch (IOException e1) {
+												// TODO Auto-generated catch block
+												e1.printStackTrace();
+											}	   
+	    							}	    							
+	    						}
+	    					} else {	    						
+	    						if(ramlis.isEmpty() == false){    								
+	    							for(int rl=0; rl <ramlis.size(); rl++){	    									    									
+    									try {
+											makelist3(collis.get(cl),widelis.get(wl),zero,ramlis.get(rl));
+										} catch (IOException e1) {
+											// TODO Auto-generated catch block
+											e1.printStackTrace();
+										}   									
+    								} 	    								
+    							}else{    								
+    									try {
+											makelist3(collis.get(cl),widelis.get(wl),zero,zero);
+										} catch (IOException e1) {
+											// TODO Auto-generated catch block
+											e1.printStackTrace();
+										}   
+    							}
+	    					}
+	    				}
+	    			}else {	    				
+	    				if(centlis.isEmpty() == false){    						
+	    					for(int cnl=0; cnl < centlis.size(); cnl++){    							
+    							if(ramlis.isEmpty() == false){    								
+    								for(int rl=0; rl <ramlis.size(); rl++){	    									    									
+    									try {
+											makelist3(collis.get(cl),zero,centlis.get(cnl),ramlis.get(rl));
+										} catch (IOException e1) {
+											// TODO Auto-generated catch block
+											e1.printStackTrace();
+										}    									
+    								} 	    								
+    							}else{    								
+    									try {
+											makelist3(collis.get(cl),zero,centlis.get(cnl),zero);
+										} catch (IOException e1) {
+											// TODO Auto-generated catch block
+											e1.printStackTrace();
+										}   
+    							}    							
+    						}
+    					} else {   						
+    						if(ramlis.isEmpty() == false){								
+    							for(int rl=0; rl <ramlis.size(); rl++){	    																		
+									try {
+										makelist3(collis.get(cl),zero,zero,ramlis.get(rl));
+									} catch (IOException e1) {
+										// TODO Auto-generated catch block
+										e1.printStackTrace();
+									}									
+								} 									
+							}else{								
+									try {
+										makelist3(collis.get(cl),zero, zero, zero);
+									} catch (IOException e1) {
+										// TODO Auto-generated catch block
+										e1.printStackTrace();
+									}
+							}
+    					}
+    				}	    				
+	    			}
+	    		} else {	
+	    			if(widelis.isEmpty() == false){	    				
+	    				for(int wl=0; wl <widelis.size(); wl++){	    					
+	    					if(centlis.isEmpty() == false){	    						
+	    						for(int cnl=0; cnl < centlis.size(); cnl++){	    					
+	    							if(ramlis.isEmpty() == false){	    								
+	    								for(int rl=0; rl <ramlis.size(); rl++){	    										    									
+	    									try {
+												makelist3(zero,widelis.get(wl),centlis.get(cnl),ramlis.get(rl));
+											} catch (IOException e1) {
+												// TODO Auto-generated catch block
+												e1.printStackTrace();
+											}	    									
+	    								} 		    								
+	    							}else{	    								
+	    								try {
+											makelist3(zero,widelis.get(wl),centlis.get(cnl),zero);
+										} catch (IOException e1) {
+											// TODO Auto-generated catch block
+											e1.printStackTrace();
+										}	   
+	    							}	    							
+	    						}
+	    					} else {	    						
+	    						if(ramlis.isEmpty() == false){   								
+	    							for(int rl=0; rl <ramlis.size(); rl++){	    									    									
+    									try {
+											makelist3(zero, widelis.get(wl),zero ,ramlis.get(rl));
+										} catch (IOException e1) {
+											// TODO Auto-generated catch block
+											e1.printStackTrace();
+										}    									
+    								} 	   								
+    							}else{    								
+    								try {
+										makelist3(zero ,widelis.get(wl),zero ,zero);
+									} catch (IOException e1) {
+										// TODO Auto-generated catch block
+										e1.printStackTrace();
+									}   
+    							}
+	    					}
+	    				}
+	    			}else {	    				
+	    				if(centlis.isEmpty() == false){    						
+	    					for(int cnl=0; cnl < centlis.size(); cnl++){    							
+    							if(ramlis.isEmpty() == false){    								
+    								for(int rl=0; rl <ramlis.size(); rl++){	    									    									
+    									try {
+											makelist3(zero, zero, centlis.get(cnl),ramlis.get(rl));
+										} catch (IOException e1) {
+											// TODO Auto-generated catch block
+											e1.printStackTrace();
+										}    									
+    								} 	    								
+    							}else{    								
+    								try {
+										makelist3(zero, zero ,centlis.get(cnl),zero);
+									} catch (IOException e1) {
+										// TODO Auto-generated catch block
+										e1.printStackTrace();
+									}   
+    							}    							
+    						}
+    					} else {    						
+    						if(ramlis.isEmpty() == false){								
+    							for(int rl=0; rl <ramlis.size(); rl++){	    																		
+									try {
+										makelist3(zero, zero, zero, ramlis.get(rl));
+									} catch (IOException e1) {
+										// TODO Auto-generated catch block
+										e1.printStackTrace();
+									}									
+								} 									
+							}else{
+									try {
+										System.out.println("wtffff");
+										makelist3(zero, zero, zero, zero);
+									} catch (IOException e1) {
+										// TODO Auto-generated catch block
+										e1.printStackTrace();
+									}
+
+							}
+    					}
+    				}	    				
+	    			}
+	    	 	makemodelpanel();
+	    		}     	
+	 		} 			
+		}
+	 }	
+
+
