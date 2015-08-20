@@ -1,0 +1,549 @@
+package ver1;
+
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.print.PrinterException;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.util.Date;
+import java.io.IOException;
+import java.util.Scanner;
+
+import javax.swing.AbstractAction;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
+
+public class MainPageG extends JPanel {
+
+	//private JButton AddMore = new JButton("Add to Model");
+	//private JButton Sell = new JButton("Sell");
+	private JButton clients  = new JButton("Clients");
+	private JRadioButton c1;
+	private JRadioButton c2;
+	private JRadioButton c3;
+	private ButtonGroup colors;
+	private String[] thecolors = {"c1","c2","c3"};
+	private String coloris = "c1";
+	private JTable sortetable;
+	private JTextField colname = new JTextField(10);
+	private JTextField modelnum = new JTextField(10);
+	private JTextField qtty = new JTextField(10);
+	private JTextField wide = new JTextField(10);
+	private JTextField centyr = new JTextField(10);
+	private JTextField ramka = new JTextField(10);
+	private JTextField price = new JTextField(10);
+	private int lines;
+	File warehouse;
+	private FileWriter tofile;
+	File events;
+	private FileWriter tofilevents;
+	Date thedate = new Date(); 
+	FileInputStream fis;
+	FileInputStream pdis;
+	FileInputStream ppis;
+	
+	JFrame frame = new JFrame();   
+	
+	String[] columnNames = {"Collection","Model & Colour","Wide","Bridge","Temple", "Quantity Sold","Quantity Left" };
+
+	DefaultTableModel model = new DefaultTableModel(columnNames,0){
+
+	    @Override
+	    public boolean isCellEditable(int row, int column) {
+	       return false;
+	    }
+	};
+	private Scanner ssc;
+	private Scanner sdc;
+	private Scanner sc2;
+
+public int countLines () {
+		
+		lines = 0;
+
+		try {			
+			BufferedReader br = new BufferedReader(new FileReader(warehouse));
+			while (br.readLine() != null) {
+			    lines++;
+			}		
+    		
+			br.close();
+		}
+		catch (IOException e) {
+			System.out.println("IO Error Occurred: " + e.toString());
+		} 
+		return lines;   
+		}
+	
+	
+	public MainPageG(String title) throws IOException {
+		
+		super ();
+		
+		fis = new FileInputStream("C:/WarehousePopcorn/warehouse.txt");
+		pdis = new FileInputStream("C:/WarehousePopcorn/events.txt");
+		ppis = new FileInputStream("C:/WarehousePopcorn/events.txt");
+		
+		tablepopulate();
+		
+		warehouse = new File ("C:/WarehousePopcorn/warehouse.txt");
+		tofile = new FileWriter(warehouse, true);
+		events = new File ("C:/WarehousePopcorn/events.txt");
+		tofilevents = new FileWriter(events, true);
+		sortetable = new JTable(model);
+		
+		   JPanel radbutpanel = new JPanel();
+		    radbutpanel.add(c1 = new JRadioButton("c1", false));
+		    radbutpanel.add(c2 = new JRadioButton("c2", false));
+		    radbutpanel.add(c3 = new JRadioButton("c3", false));
+		    radbutpanel.setLayout(new FlowLayout());
+		    
+		    price.addKeyListener(new KeyAdapter() {							// ne pozvolyava da se pishe drugo osven chisla
+	            public void keyTyped(KeyEvent e) {
+	                char vChar = e.getKeyChar();
+	                if (!(Character.isDigit(vChar)
+	                        || (vChar == KeyEvent.VK_BACK_SPACE)
+	                        || (vChar == KeyEvent.VK_DELETE))) {
+	                    e.consume();
+	                }
+	            }
+	        });
+		    centyr.addKeyListener(new KeyAdapter() {							// ne pozvolyava da se pishe drugo osven chisla
+	            public void keyTyped(KeyEvent e) {
+	                char vChar = e.getKeyChar();
+	                if (!(Character.isDigit(vChar)
+	                        || (vChar == KeyEvent.VK_BACK_SPACE)
+	                        || (vChar == KeyEvent.VK_DELETE))) {
+	                    e.consume();
+	                }
+	            }
+	        });
+		    ramka.addKeyListener(new KeyAdapter() {							// ne pozvolyava da se pishe drugo osven chisla
+	            public void keyTyped(KeyEvent e) {
+	                char vChar = e.getKeyChar();
+	                if (!(Character.isDigit(vChar)
+	                        || (vChar == KeyEvent.VK_BACK_SPACE)
+	                        || (vChar == KeyEvent.VK_DELETE))) {
+	                    e.consume();
+	                }
+	            }
+	        });
+		    qtty.addKeyListener(new KeyAdapter() {							// ne pozvolyava da se pishe drugo osven chisla
+	            public void keyTyped(KeyEvent e) {
+	                char vChar = e.getKeyChar();
+	                if (!(Character.isDigit(vChar)
+	                        || (vChar == KeyEvent.VK_BACK_SPACE)
+	                        || (vChar == KeyEvent.VK_DELETE))) {
+	                    e.consume();
+	                }
+	            }
+	        });
+		    wide.addKeyListener(new KeyAdapter() {							// ne pozvolyava da se pishe drugo osven chisla
+	            public void keyTyped(KeyEvent e) {
+	                char vChar = e.getKeyChar();
+	                if (!(Character.isDigit(vChar)
+	                        || (vChar == KeyEvent.VK_BACK_SPACE)
+	                        || (vChar == KeyEvent.VK_DELETE))) {
+	                    e.consume();
+	                }
+	            }
+	        });
+		    
+		setLayout (new BorderLayout());
+		final JPanel addnewpanel = new JPanel ();
+		addnewpanel.add(new JLabel("Collection Name:"));
+		addnewpanel.add(colname);
+	      addnewpanel.add(new JLabel("Model Number:"));
+	      addnewpanel.add(modelnum);
+	      addnewpanel.add(new JLabel("Colour:"));
+	      addnewpanel.add(radbutpanel);
+	      addnewpanel.add(new JLabel("Wide:"));
+	      addnewpanel.add(wide);
+	      addnewpanel.add(new JLabel("Bridge:"));
+	      addnewpanel.add(centyr);
+	      addnewpanel.add(new JLabel("Temple:"));
+	      addnewpanel.add(ramka);	      
+	      addnewpanel.add(new JLabel("Price:"));
+	      addnewpanel.add(price);
+	      addnewpanel.add(new JLabel("Quantity:"));
+	      addnewpanel.add(qtty);
+	    addnewpanel.setLayout(new GridLayout(9,2));
+
+	    JPanel butonPanel = new JPanel();
+	    addRadBut();
+	    
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.getContentPane().add(new JScrollPane(sortetable,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
+		frame.getContentPane().add(butonPanel, BorderLayout.SOUTH);
+		frame.setBounds(350, 90, 770, 650);  
+	    frame.setVisible(true);
+
+	//	butonPanel.add(Sell);
+		butonPanel.add(clients);
+		//butonPanel.add(AddMore);
+		butonPanel.add(new JButton(new AbstractAction("Add New") {
+
+	         /**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
+	         public void actionPerformed(ActionEvent arg0) {
+	                 	 
+ 	        	modelnum.setText("");
+	            qtty.setText("");
+	            ramka.setText("");
+	            centyr.setText("");
+	            wide.setText("");
+	            
+	            int result = JOptionPane.showConfirmDialog(MainPageG.this, addnewpanel,
+	                  "Add new Model", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+	            if (result == JOptionPane.OK_OPTION) {
+
+	               try {
+					tofile.write(colname.getText());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	               try {
+					tofile.write( ":::" + modelnum.getText() + " / "+ coloris);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	               try {
+					tofilevents.write(modelnum.getText() + " / "+ coloris);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	              
+	               try {
+					tofile.write( ":::" + wide.getText());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	               try {
+						tofile.write( ":::" + centyr.getText());
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+	               try {
+						tofile.write( ":::" + ramka.getText());
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+	               
+	               try {
+						tofile.write( ":::" + price.getText() + ":::0:::70");
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+	              
+	               
+	               try {
+						tofilevents.write( ":::" + qtty.getText());
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+	               try {
+						tofilevents.write( ":::" + thedate);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+	               try {
+					tofile.write("\n");
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	               try {
+						tofilevents.write("\n");
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+	               try {
+						tofilevents.flush();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+	               try {
+					tofile.flush();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	               try {
+					tablepopulate();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}								
+	            }
+	         }
+	      }));
+		
+		
+sortetable.addMouseListener(new MouseAdapter() {
+
+			public void mousePressed(MouseEvent me) {
+		        
+				JTable table = (JTable) me.getSource();
+		        Point p = me.getPoint();
+		        int row = table.rowAtPoint(p);
+		        if (me.getClickCount() == 2) {
+
+		        	qtty.setText("");
+			            
+			            final JPanel addmorepanel = new JPanel ();
+			    	      addmorepanel.add(new JLabel("Model Number: "));
+			    	      addmorepanel.add(new JLabel( sortetable.getValueAt(row, 1).toString()));
+			    	      addmorepanel.add(new JLabel("Add More:"));
+			    	      addmorepanel.add(qtty);
+			    	    addmorepanel.setLayout(new GridLayout(2,2));
+			            
+			            int result = JOptionPane.showConfirmDialog(MainPageG.this, addmorepanel,
+			                  "Add more to Model " + sortetable.getValueAt(row, 1).toString(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+			            if (result == JOptionPane.OK_OPTION) {
+			            		
+			            	try {
+			   					tofilevents.write(sortetable.getValueAt(row, 1).toString());
+			   				} catch (IOException ev) {
+			   					// TODO Auto-generated catch block
+			   					ev.printStackTrace();
+			   				}
+			   			  
+			                try {
+			   				tofilevents.write(":::" + qtty.getText());
+			   			} catch (IOException ev) {
+			   				// TODO Auto-generated catch block
+			   				ev.printStackTrace();
+			   			}
+			                try {
+			   					tofilevents.write(":::" + thedate);
+			   				} catch (IOException ev) {
+			   					// TODO Auto-generated catch block
+			   					ev.printStackTrace();
+			   				}
+			                try {
+			   					tofilevents.write("\n");
+			   				} catch (IOException ev) {
+			   					// TODO Auto-generated catch block
+			   					ev.printStackTrace();
+			   				}
+			                try {
+			   				tofilevents.flush();
+			   				
+			   			} catch (IOException ev) {
+			   				// TODO Auto-generated catch block
+			   				ev.printStackTrace();
+			   			} 
+			                
+			                addnewpanel.add(qtty);
+			                
+			        } else {
+			        	addnewpanel.add(qtty);
+			        }
+			            	
+			      }
+			   }
+			    
+		});
+		
+	
+		Reaction react = new Reaction();
+		addRadBut();
+		clients.addActionListener(react);
+		//Sell.addActionListener(react);
+		//AddMore.addActionListener(react);
+
+		
+	}
+	
+	private void tablepopulate() throws IOException {
+		
+		  	sc2 = new Scanner(fis);
+	        String line;
+	        String details[] = null;
+
+	        while(sc2.hasNextLine()){
+	            
+	        	line = sc2.nextLine();
+	            details = line.split(":::");        
+	            
+	            Object[] dataRow = new Object[] {details[0],details[1],details[2],details[3],details[4], soldq(details[1]),leftq(details[1])};
+
+	            model.addRow(dataRow);
+	        }
+		}
+
+	
+	private String soldq(String model) throws IOException{
+		
+		sdc = new Scanner(pdis);
+        String dateq;
+        String dateqils[] = null;
+        String qsld = new String();
+        String line2[] = null;
+        int qqs = 0;
+        
+        while(sdc.hasNextLine()){
+            
+        	dateq = sdc.nextLine();
+            dateqils = dateq.split(":::"); 
+            line2 = dateqils[1].split(";;");
+
+            for (String what: line2){
+            	
+            	if(what.equalsIgnoreCase(model)){
+ 
+            		qqs++;
+            	}
+            }
+      
+            
+        } qsld = Integer.toString(qqs)+ " units";
+
+        sdc.close();
+        sdc=null;
+        pdis.close();
+        pdis = new FileInputStream("C:/WarehousePopcorn/events.txt");
+        return qsld;
+				
+	}
+	
+	public String leftq(String model) throws IOException{
+		
+		ssc = new Scanner(ppis);
+        String dateql;
+        String dateqilsl[] = null;
+        String qlft = new String();      
+        int q = 0;
+
+        while(ssc.hasNextLine()){
+       
+        	dateql = ssc.nextLine();
+            dateqilsl = dateql.split(":::"); 
+
+            if(dateqilsl[0].equalsIgnoreCase(model)) { 
+                q += Integer.parseInt(dateqilsl[1]);    
+        } 
+        }
+        
+        sdc = new Scanner(pdis);
+        String dateq;
+        String dateqils[] = null;
+        String line2[] = null;
+        int qs = 0;
+        
+        while(sdc.hasNextLine()){
+            
+        	dateq = sdc.nextLine();
+            dateqils = dateq.split(":::"); 
+            line2 = dateqils[1].split(";;");
+
+            for (String what: line2){
+            	
+            	if(what.equalsIgnoreCase(model)){
+ 
+            		qs++;
+            	}
+            }
+        } 
+
+        sdc.close();
+        sdc=null;
+        pdis.close();
+        pdis = new FileInputStream("C:/WarehousePopcorn/events.txt");        
+        ssc.close();
+        ssc=null;
+        ppis.close();
+        ppis = new FileInputStream("C:/WarehousePopcorn/events.txt");
+        qlft = Integer.toString(q-qs) + " units";
+        
+        return qlft;
+	}
+	
+	private void addRadBut (){
+		
+		colors = new ButtonGroup();
+		
+		colors.add(c1);
+		colors.add(c2);
+		colors.add(c3);
+		
+		c1.addItemListener(new thecolor(thecolors[0]));
+		c2.addItemListener(new thecolor(thecolors[1]));
+		c3.addItemListener(new thecolor(thecolors[2]));
+			
+	}
+
+	private class thecolor implements ItemListener {
+
+		private String theone;
+		
+		public thecolor(String c){
+			theone = c;
+		}
+		@Override
+		public void itemStateChanged(ItemEvent event) {
+			coloris = theone;
+			}
+	}	
+
+	public class Reaction implements ActionListener{
+		
+		public void actionPerformed (ActionEvent event){
+
+			if (clients == event.getSource()) {
+	    		frame.dispose();
+	    		try {
+					clients gotoclients = new clients("Clients Data Table");
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	    	} 
+			
+		}
+	}
+
+
+}
+
+
