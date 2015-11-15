@@ -9,5 +9,4 @@ hidden double clicks on the 2 main tables for more functions
 
 some of the code its not used bc of requirement changes during the development
 
-not the best thing to use in your shop. 
 here only for the code as an example  
